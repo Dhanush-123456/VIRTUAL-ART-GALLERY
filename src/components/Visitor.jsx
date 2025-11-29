@@ -4,7 +4,7 @@ import Gallery from './Gallery';
 import Modal from './Modal';
 import Login from './Login';
 import PaymentGateway from './PaymentGateway';
-import { artworks } from '../data/artworks';
+import api from '../services/api';
 
 const TourSlideshow = ({ artworks }) => {
   const [currentSlide, setCurrentSlide] = useState(0);

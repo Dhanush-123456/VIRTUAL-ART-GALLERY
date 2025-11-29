@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ArtItem from './ArtItem';
-import { artworks } from '../data/artworks';
+import api from '../services/api';
 
 const Gallery = ({ openModal, searchTerm = '', cart = [], setCart = () => {}, onBuyNow = () => {}, user = null }) => {
+  const [artworks, setArtworks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch artworks from API
+  useEffect(() => {
+    const fetchArtworks = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.getArtworks();
+        setArtworks(response.artworks || []);
+        setError(null);
+      } catch (err) {
+        setError(err.message || 'Failed to load artworks');
+        // Fallback to local data if API fails
+        const { artworks: localArtworks } = await import('../data/artworks');
+        setArtworks(localArtworks);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArtworks();
+  }, []);
+
   const startVirtualTour = () => {
     const tourContent = (
       <div>
@@ -21,6 +46,22 @@ const Gallery = ({ openModal, searchTerm = '', cart = [], setCart = () => {}, on
         (art.description && art.description.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     : artworks;
+
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem' }}>
+        <p>Loading artworks...</p>
+      </div>
+    );
+  }
+
+  if (error && artworks.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem' }}>
+        <p style={{ color: '#e74c3c' }}>Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <>

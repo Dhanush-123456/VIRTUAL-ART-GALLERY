@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 
 const ArtItem = ({ art, openModal, cart = [], setCart = () => {}, onBuyNow = () => {}, user = null }) => {
   const [showNotifyForm, setShowNotifyForm] = useState(false);
@@ -253,9 +254,15 @@ const ArtItem = ({ art, openModal, cart = [], setCart = () => {}, onBuyNow = () 
     openModal(content);
   };
 
-  const addToCart = (art) => {
-    setCart(prev => [...prev, art]);
-    alert(`"${art.title}" added to cart!`);
+  const addToCart = async (art) => {
+    try {
+      // API call to add item to cart
+      await api.addToCart(art);
+      setCart(prev => [...prev, art]);
+      alert(`"${art.title}" added to cart!`);
+    } catch (err) {
+      alert(err.message || 'Failed to add item to cart. Please try again.');
+    }
   };
 
   const buyArt = (art) => {
@@ -266,7 +273,7 @@ const ArtItem = ({ art, openModal, cart = [], setCart = () => {}, onBuyNow = () 
     onBuyNow(art);
   };
 
-  const handleNotifyMe = (e) => {
+  const handleNotifyMe = async (e) => {
     if (e) e.preventDefault();
     
     const emailToUse = user?.email || notifyEmail.trim();
@@ -281,88 +288,55 @@ const ArtItem = ({ art, openModal, cart = [], setCart = () => {}, onBuyNow = () 
       return;
     }
 
-    // Save notification request
-    const notifications = JSON.parse(localStorage.getItem('stock_notifications') || '[]');
-    const notification = {
-      id: Date.now(),
-      artworkId: art.id,
-      artworkTitle: art.title,
-      artist: art.artist,
-      email: emailToUse,
-      userId: user?.id || null,
-      username: user?.username || 'Guest',
-      requestedAt: new Date().toISOString(),
-      notified: false
-    };
+    try {
+      // API call for notification subscription
+      const response = await api.subscribeNotification({
+        artworkId: art.id,
+        artworkTitle: art.title,
+        artist: art.artist,
+        email: emailToUse,
+        userId: user?.id || null,
+        username: user?.username || 'Guest'
+      });
 
-    // Check if already registered for this artwork
-    const existing = notifications.find(
-      n => n.artworkId === art.id && 
-      (n.email.toLowerCase() === emailToUse.toLowerCase() || (user && n.userId === user.id))
-    );
-
-    if (existing) {
-      setNotifyMessage('You are already registered for notifications on this artwork');
-      return;
-    }
-
-    notifications.push(notification);
-    localStorage.setItem('stock_notifications', JSON.stringify(notifications));
-
-    // Show success message
-    setNotifyMessage('success');
-    
-    // Show confirmation alert
-    setTimeout(() => {
-      alert(`✅ Notification Registered Successfully!\n\n📧 Email: ${emailToUse}\n🖼️ Artwork: "${art.title}" by ${art.artist}\n\nYou will receive an email notification when this artwork is back in stock.`);
+      // Show success message
+      setNotifyMessage('success');
       
-      // Close form after a delay if user is logged in (auto-registered)
-      if (user?.email) {
+      // Show confirmation alert
+      setTimeout(() => {
+        alert(`✅ Notification Registered Successfully!\n\n📧 Email: ${emailToUse}\n🖼️ Artwork: "${art.title}" by ${art.artist}\n\nYou will receive an email notification when this artwork is back in stock.`);
+        
+        // Close form after a delay
         setTimeout(() => {
           setShowNotifyForm(false);
           setNotifyEmail('');
           setNotifyMessage('');
         }, 2000);
-      }
-    }, 500);
+      }, 500);
+    } catch (err) {
+      setNotifyMessage(err.message || 'Failed to register notification. Please try again.');
+    }
   };
 
-  const handleNotifyClick = () => {
+  const handleNotifyClick = async () => {
     // If user is logged in, register notification immediately using their email
     if (user?.email) {
-      const emailToUse = user.email;
-      
-      // Save notification request
-      const notifications = JSON.parse(localStorage.getItem('stock_notifications') || '[]');
-      
-      // Check if already registered
-      const existing = notifications.find(
-        n => n.artworkId === art.id && 
-        (n.email.toLowerCase() === emailToUse.toLowerCase() || n.userId === user.id)
-      );
+      try {
+        // API call for notification subscription
+        const response = await api.subscribeNotification({
+          artworkId: art.id,
+          artworkTitle: art.title,
+          artist: art.artist,
+          email: user.email,
+          userId: user.id,
+          username: user.username
+        });
 
-      if (existing) {
-        alert(`You are already registered for notifications on "${art.title}".\n\nYou will be notified at ${emailToUse} when it's back in stock.`);
-        return;
+        // Show success message
+        alert(`✅ Notification Registered Successfully!\n\n📧 Email: ${user.email}\n🖼️ Artwork: "${art.title}" by ${art.artist}\n\nYou will receive an email notification at ${user.email} when this artwork is back in stock.`);
+      } catch (err) {
+        alert(err.message || 'Failed to register notification. Please try again.');
       }
-
-      const notification = {
-        id: Date.now(),
-        artworkId: art.id,
-        artworkTitle: art.title,
-        artist: art.artist,
-        email: emailToUse,
-        userId: user.id,
-        username: user.username,
-        requestedAt: new Date().toISOString(),
-        notified: false
-      };
-
-      notifications.push(notification);
-      localStorage.setItem('stock_notifications', JSON.stringify(notifications));
-
-      // Show success message
-      alert(`✅ Notification Registered Successfully!\n\n📧 Email: ${emailToUse}\n🖼️ Artwork: "${art.title}" by ${art.artist}\n\nYou will receive an email notification at ${emailToUse} when this artwork is back in stock.`);
     } else {
       // If not logged in, show form
       setShowNotifyForm(true);

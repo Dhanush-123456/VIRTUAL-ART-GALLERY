@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../services/api';
 
 const PaymentGateway = ({ cart, total, onSuccess, onCancel }) => {
   const [paymentData, setPaymentData] = useState({
@@ -119,20 +120,29 @@ const PaymentGateway = ({ cart, total, onSuccess, onCancel }) => {
     setIsProcessing(true);
     setPaymentStatus(null);
 
-    // Simulate payment processing (2-3 seconds)
-    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
+    try {
+      // API call for payment processing
+      const response = await api.processPayment({
+        amount: total,
+        cardNumber: paymentData.cardNumber.replace(/\s/g, ''),
+        cardHolder: paymentData.cardName,
+        expiryDate: paymentData.expiryDate,
+        cvv: paymentData.cvv,
+        email: paymentData.email,
+        items: cart
+      });
 
-    // Simulate success (90% success rate for demo)
-    const isSuccess = Math.random() > 0.1;
+      setIsProcessing(false);
+      setPaymentStatus('success');
 
-    setIsProcessing(false);
-    setPaymentStatus(isSuccess ? 'success' : 'failed');
-
-    if (isSuccess) {
       // Wait a bit before calling onSuccess to show success message
       setTimeout(() => {
         onSuccess();
       }, 2000);
+    } catch (err) {
+      setIsProcessing(false);
+      setPaymentStatus('failed');
+      setErrors({ general: err.message || 'Payment processing failed. Please try again.' });
     }
   };
 
@@ -224,6 +234,19 @@ const PaymentGateway = ({ cart, total, onSuccess, onCancel }) => {
       </div>
 
       <form onSubmit={handleSubmit}>
+        {errors.general && (
+          <div style={{
+            padding: '0.75rem',
+            background: '#fee',
+            border: '1px solid #e74c3c',
+            borderRadius: '5px',
+            color: '#e74c3c',
+            marginBottom: '1rem',
+            fontSize: '0.9rem'
+          }}>
+            {errors.general}
+          </div>
+        )}
         <div className="form-group" style={{ marginBottom: '1rem' }}>
           <label style={{ display: 'block', marginBottom: '0.5rem', color: '#555', fontWeight: '500' }}>
             Card Number *

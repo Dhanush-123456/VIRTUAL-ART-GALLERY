@@ -204,6 +204,19 @@ const Signup = ({ onSignup }) => {
           Join our virtual art gallery community
         </p>
         <form onSubmit={handleSubmit}>
+          {errors.general && (
+            <div style={{
+              padding: '0.75rem',
+              background: '#fee',
+              border: '1px solid #e74c3c',
+              borderRadius: '5px',
+              color: '#e74c3c',
+              marginBottom: '1rem',
+              fontSize: '0.9rem'
+            }}>
+              {errors.general}
+            </div>
+          )}
           <div className="form-group">
             <label>Full Name *</label>
             <input

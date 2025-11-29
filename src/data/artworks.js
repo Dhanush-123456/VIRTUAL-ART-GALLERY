@@ -95,7 +95,7 @@ export const artworks = [
         title: "Water Lilies",
         artist: "Claude Monet",
         year: 1919,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Claude_Monet%2C_Water_Lilies%2C_1919%2C_Metropolitan_Museum_of_Art.jpg/800px-Claude_Monet%2C_Water_Lilies%2C_1919%2C_Metropolitan_Museum_of_Art.jpg",
+        image: "https://t4.ftcdn.net/jpg/09/20/21/63/360_F_920216320_Ea4LMEsJYkce9VHGeUIKsZO4umKm1Vfh.jpg",
         description: "A series of approximately 250 oil paintings depicting Monet's flower garden at Giverny.",
         history: "Painted by French Impressionist Claude Monet, these works represent his focus on the effects of light and reflection on water.",
         artistBio: "Claude Monet was a founder of French Impressionist painting and the most consistent and prolific practitioner of the movement's philosophy.",
