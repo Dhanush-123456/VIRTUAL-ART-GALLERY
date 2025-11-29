@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Art Gallery Home</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+        }
+        .hero button {
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .hero button:hover {
+            background: #f0f0f0;
+        }
+        .gallery {
+            padding: 50px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .hidden {
+            display: none;
+        }
+        .discover-text {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .card p {
+            text-align: center;
+            padding: 10px;
+            margin: 0;
+            color: #333;
+        }
+        .glow {
+            animation: glow 1s ease-in-out;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            50% { box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.7); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Online art exhibitions</h1>
+        <button id="open-btn">Open your own art exhibition »</button>
+        <button id="discover-btn">Discover art exhibitions »</button>
+    </div>
+    <div id="gallery" class="gallery hidden">
+        <div id="discover-text" class="discover-text hidden">Discover paintings from online exhibitions</div>
+        <div class="grid">
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=1" alt="Painting">
+                <p>Painting #1</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=2" alt="Painting">
+                <p>Painting #2</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=3" alt="Painting">
+                <p>Painting #3</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=4" alt="Painting">
+                <p>Painting #4</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=5" alt="Painting">
+                <p>Painting #5</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=6" alt="Painting">
+                <p>Painting #6</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=7" alt="Painting">
+                <p>Painting #7</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=8" alt="Painting">
+                <p>Painting #8</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=9" alt="Painting">
+                <p>Painting #9</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=10" alt="Painting">
+                <p>Painting #10</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=11" alt="Painting">
+                <p>Painting #11</p>
+            </div>
+            <div class="card">
+                <img src="https://source.unsplash.com/featured/?painting,art&sig=12" alt="Painting">
+                <p>Painting #12</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        const openBtn = document.getElementById('open-btn');
+        const discoverBtn = document.getElementById('discover-btn');
+        const gallery = document.getElementById('gallery');
+        const discoverText = document.getElementById('discover-text');
+
+        openBtn.addEventListener('click', () => {
+            gallery.classList.remove('hidden');
+            gallery.scrollIntoView({ behavior: 'smooth' });
+            gallery.classList.add('glow');
+            setTimeout(() => gallery.classList.remove('glow'), 1000);
+        });
+
+        discoverBtn.addEventListener('click', () => {
+            gallery.classList.remove('hidden');
+            discoverText.classList.remove('hidden');
+            gallery.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

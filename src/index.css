@@ -1,0 +1,117 @@
+/* Import the existing styles */
+@import '../styles.css';
+
+/* Additional Global Styles for Better UX */
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --success-color: #4CAF50;
+    --error-color: #e74c3c;
+    --warning-color: #FF9800;
+    --text-color: #333;
+    --text-light: #666;
+    --bg-color: #f4f4f4;
+    --white: #ffffff;
+    --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus Styles for Accessibility */
+*:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Image Optimization */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Button Hover Effects */
+button, .btn, a.button {
+    transition: all 0.3s ease;
+}
+
+button:hover, .btn:hover, a.button:hover {
+    transform: translateY(-2px);
+}
+
+button:active, .btn:active, a.button:active {
+    transform: translateY(0);
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Smooth Transitions */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Prevent Text Selection on UI Elements */
+button, .btn, .action-btn {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Better Touch Targets for Mobile */
+@media (max-width: 768px) {
+    button, a, input, select, textarea {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Hide Scrollbar but Keep Functionality */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Print Styles */
+@media print {
+    .main-header,
+    .main-footer,
+    .dashboard-actions,
+    button,
+    .action-btn {
+        display: none !important;
+    }
+    
+    .app main {
+        padding-top: 0 !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+    
+    .art-item,
+    .artwork-card,
+    .artist-card {
+        page-break-inside: avoid;
+    }
+}

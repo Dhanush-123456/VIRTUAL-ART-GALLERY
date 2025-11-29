@@ -1,0 +1,78 @@
+// Art data
+export const artworks = [
+    {
+        id: 1,
+        title: "Starry Night",
+        artist: "Vincent van Gogh",
+        year: 1889,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
+        description: "A swirling, dreamlike depiction of the night sky over a small hillside village.",
+        history: "Painted by Dutch artist Vincent van Gogh in 1889, this masterpiece is housed in the Museum of Modern Art in New York City. It represents van Gogh's turbulent mental state during his stay at the asylum in Saint-Rémy-de-Provence.",
+        artistBio: "Vincent van Gogh was a Dutch Post-Impressionist painter who is among the most famous and influential figures in the history of Western art.",
+        culturalSignificance: "Represents the pinnacle of Post-Impressionism and has become an iconic symbol of modern art.",
+        virtualTourUrl: "https://example.com/tour/starry-night",
+        exhibitionId: null,
+        price: 1000000,
+        status: "available"
+    },
+    {
+        id: 2,
+        title: "The Mona Lisa",
+        artist: "Leonardo da Vinci",
+        year: 1503,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/1280px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
+        description: "A half-length portrait painting of a woman with a mysterious smile.",
+        history: "Created by Italian Renaissance artist Leonardo da Vinci between 1503 and 1519, this iconic painting is displayed in the Louvre Museum in Paris. It is one of the most famous artworks in the world.",
+        artistBio: "Leonardo da Vinci was an Italian polymath of the High Renaissance who was active as a painter, draughtsman, engineer, scientist, theorist, sculptor, and architect.",
+        culturalSignificance: "Symbol of the Renaissance and one of the most visited, written about, and sung about works of art in the world.",
+        virtualTourUrl: "https://example.com/tour/mona-lisa",
+        exhibitionId: null,
+        price: 850000000,
+        status: "available"
+    },
+    {
+        id: 3,
+        title: "The Great Wave off Kanagawa",
+        artist: "Katsushika Hokusai",
+        year: 1831,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Great_Wave_off_Kanagawa.jpg/1280px-The_Great_Wave_off_Kanagawa.jpg",
+        description: "A woodblock print depicting a dramatic wave about to engulf boats off the coast of Kanagawa.",
+        history: "Part of the series 'Thirty-six Views of Mount Fuji' by Japanese artist Katsushika Hokusai, this print from 1831 showcases the power of nature and is a prime example of ukiyo-e art.",
+        artistBio: "Katsushika Hokusai was a Japanese artist, ukiyo-e painter and printmaker of the Edo period.",
+        culturalSignificance: "Iconic representation of Japanese art and nature's power.",
+        virtualTourUrl: "https://example.com/tour/great-wave",
+        exhibitionId: null,
+        price: 50000,
+        status: "available"
+    },
+    {
+        id: 4,
+        title: "The Persistence of Memory",
+        artist: "Salvador Dalí",
+        year: 1931,
+        image: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
+        description: "A surreal landscape with melting clocks.",
+        history: "Painted in 1931 by Salvador Dalí, this iconic surrealist work is housed in the Museum of Modern Art in New York.",
+        artistBio: "Salvador Dalí was a Spanish surrealist artist renowned for his technical skill and bizarre, dream-like imagery.",
+        culturalSignificance: "Represents the fluidity of time and is a cornerstone of surrealism.",
+        virtualTourUrl: "https://example.com/tour/persistence-memory",
+        exhibitionId: null,
+        price: 200000,
+        status: "available"
+    },
+    {
+        id: 5,
+        title: "Girl with a Pearl Earring",
+        artist: "Johannes Vermeer",
+        year: 1665,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg",
+        description: "A portrait of a girl wearing an exotic dress and a large pearl earring.",
+        history: "Painted by Dutch artist Johannes Vermeer around 1665, this masterpiece is displayed in the Mauritshuis museum in The Hague.",
+        artistBio: "Johannes Vermeer was a Dutch Baroque Period painter who specialized in domestic interior scenes of middle-class life.",
+        culturalSignificance: "Often called the 'Mona Lisa of the North' for its enigmatic expression.",
+        virtualTourUrl: "https://example.com/tour/girl-pearl-earring",
+        exhibitionId: null,
+        price: 30000000,
+        status: "available"
+    }
+];
