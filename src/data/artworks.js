@@ -73,6 +73,36 @@ export const artworks = [
         virtualTourUrl: "https://example.com/tour/girl-pearl-earring",
         exhibitionId: null,
         price: 30000000,
-        status: "available"
+        status: "out of stock"
+    },
+    {
+        id: 6,
+        title: "The Scream",
+        artist: "Edvard Munch",
+        year: 1893,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg",
+        description: "An iconic expressionist painting depicting a figure with an agonized expression against a landscape with a tumultuous orange sky.",
+        history: "Created by Norwegian artist Edvard Munch in 1893, this is one of the most recognizable paintings in the world and a symbol of human anxiety.",
+        artistBio: "Edvard Munch was a Norwegian painter whose best known work, The Scream, has become one of the most iconic images of world art.",
+        culturalSignificance: "Represents existential angst and has become a universal symbol of human anxiety and despair.",
+        virtualTourUrl: "https://example.com/tour/the-scream",
+        exhibitionId: null,
+        price: 120000000,
+        status: "sold"
+    },
+    {
+        id: 7,
+        title: "Water Lilies",
+        artist: "Claude Monet",
+        year: 1919,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Claude_Monet%2C_Water_Lilies%2C_1919%2C_Metropolitan_Museum_of_Art.jpg/800px-Claude_Monet%2C_Water_Lilies%2C_1919%2C_Metropolitan_Museum_of_Art.jpg",
+        description: "A series of approximately 250 oil paintings depicting Monet's flower garden at Giverny.",
+        history: "Painted by French Impressionist Claude Monet, these works represent his focus on the effects of light and reflection on water.",
+        artistBio: "Claude Monet was a founder of French Impressionist painting and the most consistent and prolific practitioner of the movement's philosophy.",
+        culturalSignificance: "Exemplifies the Impressionist movement's focus on capturing the fleeting effects of light and atmosphere.",
+        virtualTourUrl: "https://example.com/tour/water-lilies",
+        exhibitionId: null,
+        price: 54000000,
+        status: "unavailable"
     }
 ];

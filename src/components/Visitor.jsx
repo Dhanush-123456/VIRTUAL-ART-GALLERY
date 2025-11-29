@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Gallery from './Gallery';
 import Modal from './Modal';
 import Login from './Login';
+import PaymentGateway from './PaymentGateway';
 import { artworks } from '../data/artworks';
 
 const TourSlideshow = ({ artworks }) => {
@@ -48,6 +49,8 @@ const Visitor = ({ user, onLogin, onLogout }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cart, setCart] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showPaymentGateway, setShowPaymentGateway] = useState(false);
+  const [paymentCart, setPaymentCart] = useState([]);
   const navigate = useNavigate();
 
   const openModal = (content) => {
@@ -118,11 +121,27 @@ const Visitor = ({ user, onLogin, onLogout }) => {
                   ))}
                   <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '2px solid #333' }}>
                     <h3>Total: ${cart.reduce((sum, item) => sum + (item.price || 0), 0).toLocaleString()}</h3>
-                    <button onClick={() => {
-                      alert('Thank you for your purchase! In a real application, this would redirect to checkout.');
-                      setCart([]);
-                      closeModal();
-                    }}>Checkout</button>
+                    <button 
+                      onClick={() => {
+                        closeModal();
+                        setPaymentCart(cart);
+                        setShowPaymentGateway(true);
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        marginTop: '0.5rem'
+                      }}
+                    >
+                      Proceed to Checkout
+                    </button>
                   </div>
                 </div>
               );
@@ -151,11 +170,49 @@ const Visitor = ({ user, onLogin, onLogout }) => {
               style={{ padding: '0.75rem', width: '100%', maxWidth: '400px', borderRadius: '5px', border: '2px solid #e1e5e9' }}
             />
           </div>
-          <Gallery openModal={openModal} searchTerm={searchTerm} cart={cart} setCart={setCart} />
+          <Gallery 
+            openModal={openModal} 
+            searchTerm={searchTerm} 
+            cart={cart} 
+            setCart={setCart}
+            user={user}
+            onBuyNow={(art) => {
+              setPaymentCart([art]);
+              setShowPaymentGateway(true);
+            }}
+          />
         </section>
       </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
+      
+      {showPaymentGateway && (
+        <Modal
+          isOpen={showPaymentGateway}
+          onClose={() => {
+            setShowPaymentGateway(false);
+            setPaymentCart([]);
+          }}
+          content={
+            <PaymentGateway
+              cart={paymentCart}
+              total={paymentCart.reduce((sum, item) => sum + (item.price || 0), 0)}
+              onSuccess={() => {
+                // Remove purchased items from cart
+                const purchasedIds = paymentCart.map(item => item.id);
+                setCart(prev => prev.filter(item => !purchasedIds.includes(item.id)));
+                setShowPaymentGateway(false);
+                setPaymentCart([]);
+                alert('Thank you for your purchase! Your order has been confirmed.');
+              }}
+              onCancel={() => {
+                setShowPaymentGateway(false);
+                setPaymentCart([]);
+              }}
+            />
+          }
+        />
+      )}
     </div>
   );
 };

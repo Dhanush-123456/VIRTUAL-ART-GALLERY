@@ -2,7 +2,7 @@ import React from 'react';
 import ArtItem from './ArtItem';
 import { artworks } from '../data/artworks';
 
-const Gallery = ({ openModal, searchTerm = '', cart = [], setCart = () => {} }) => {
+const Gallery = ({ openModal, searchTerm = '', cart = [], setCart = () => {}, onBuyNow = () => {}, user = null }) => {
   const startVirtualTour = () => {
     const tourContent = (
       <div>
@@ -28,7 +28,7 @@ const Gallery = ({ openModal, searchTerm = '', cart = [], setCart = () => {} }) 
         <div id="art-grid">
           {filteredArtworks.length > 0 ? (
             filteredArtworks.map(art => (
-              <ArtItem key={art.id} art={art} openModal={openModal} cart={cart} setCart={setCart} />
+              <ArtItem key={art.id} art={art} openModal={openModal} cart={cart} setCart={setCart} onBuyNow={onBuyNow} user={user} />
             ))
           ) : (
             <div style={{ textAlign: 'center', padding: '2rem' }}>

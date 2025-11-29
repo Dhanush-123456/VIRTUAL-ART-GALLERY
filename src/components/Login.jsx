@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Captcha from './Captcha';
+import api from '../services/api';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('visitor');
   const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [captchaError, setCaptchaError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Default admin credentials
+  const ADMIN_CREDENTIALS = {
+    username: 'admin',
+    password: 'admin123',
+    id: 0,
+    email: 'admin@gallery.com',
+    role: 'admin',
+    fullName: 'Administrator'
+  };
 
   // Check if user is already logged in
   useEffect(() => {
@@ -30,75 +45,139 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const validateField = (name, value) => {
+    const fieldErrors = {};
+
+    if (name === 'username') {
+      if (!value.trim()) {
+        fieldErrors.username = 'Username or email is required';
+      } else if (value.includes('@')) {
+        // If it looks like an email, validate email format
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+          fieldErrors.username = 'Please enter a valid email address';
+        }
+      } else if (value.trim().length < 3) {
+        fieldErrors.username = 'Username must be at least 3 characters';
+      }
+    }
+
+    if (name === 'password') {
+      if (!value || value.trim().length === 0) {
+        fieldErrors.password = 'Password is required';
+      }
+    }
+
+    return fieldErrors;
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const fieldError = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: fieldError[name] || ''
+    }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    if (name === 'username') {
+      setUsername(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
+
+    // Clear errors when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+    // Clear general error
+    if (error) {
+      setError('');
+    }
+  };
+
+  const handleCaptchaVerify = (verified) => {
+    setIsCaptchaVerified(verified);
+    if (verified) {
+      setCaptchaError('');
+    }
+  };
+
+  const handleCaptchaError = (errorMsg) => {
+    setCaptchaError(errorMsg);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setCaptchaError('');
 
-    // Get users from localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    // Validate fields
+    const usernameError = validateField('username', username);
+    const passwordError = validateField('password', password);
+    const newErrors = { ...usernameError, ...passwordError };
+    
+    setErrors(newErrors);
 
-    // Find user by username or email
-    const user = users.find(
-      u => (u.username === username || u.email === username) && u.password === password
-    );
-
-    if (!user) {
-      setError('Invalid username/email or password');
+    // If there are validation errors, don't proceed
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
 
-    // Check role if specified
-    if (role && user.role !== role) {
-      setError(`Please login as ${user.role} or select the correct role`);
+    // Check CAPTCHA verification
+    if (!isCaptchaVerified) {
+      setCaptchaError('Please complete the CAPTCHA verification');
+      setError('Please complete the security check before logging in');
       return;
     }
 
-    // Create session user object (without password)
-    const sessionUser = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      fullName: user.fullName
-    };
+    setIsLoading(true);
+    setError('');
 
-    // Store in sessionStorage
-    sessionStorage.setItem('currentUser', JSON.stringify(sessionUser));
+    try {
+      // API call for login
+      const response = await api.login({
+        username,
+        password
+      });
 
-    // Store in localStorage if remember me is checked
-    if (rememberMe) {
-      localStorage.setItem('rememberedUser', JSON.stringify(sessionUser));
-    } else {
-      localStorage.removeItem('rememberedUser');
-    }
+      const sessionUser = response.user;
 
-    // Call onLogin callback
-    if (onLogin) {
-      onLogin(sessionUser);
-    }
-
-    // Navigate based on role
-    navigateToRole(user.role);
-  };
-
-  // Quick login for demo (optional - for testing)
-  const handleQuickLogin = (demoRole) => {
-    const demoUsers = {
-      admin: { id: 1, username: 'admin', email: 'admin@example.com', role: 'admin', fullName: 'Admin User' },
-      artist: { id: 2, username: 'artist', email: 'artist@example.com', role: 'artist', fullName: 'Artist User' },
-      curator: { id: 3, username: 'curator', email: 'curator@example.com', role: 'curator', fullName: 'Curator User' },
-      visitor: { id: 4, username: 'visitor', email: 'visitor@example.com', role: 'visitor', fullName: 'Visitor User' }
-    };
-
-    const demoUser = demoUsers[demoRole];
-    if (demoUser) {
-      sessionStorage.setItem('currentUser', JSON.stringify(demoUser));
-      if (onLogin) {
-        onLogin(demoUser);
+      // Store token (in real app, this would be used for authenticated requests)
+      if (response.token) {
+        sessionStorage.setItem('authToken', response.token);
       }
-      navigateToRole(demoRole);
+
+      // Store in sessionStorage
+      sessionStorage.setItem('currentUser', JSON.stringify(sessionUser));
+
+      // Store in localStorage if remember me is checked
+      if (rememberMe) {
+        localStorage.setItem('rememberedUser', JSON.stringify(sessionUser));
+      } else {
+        localStorage.removeItem('rememberedUser');
+      }
+
+      // Call onLogin callback
+      if (onLogin) {
+        onLogin(sessionUser);
+      }
+
+      // Navigate based on role
+      navigateToRole(sessionUser.role);
+    } catch (err) {
+      setError(err.message || 'Login failed. Please try again.');
+      setIsCaptchaVerified(false); // Reset CAPTCHA on authentication failure
+    } finally {
+      setIsLoading(false);
     }
   };
+
 
   return (
     <div className="login-container">
@@ -126,36 +205,40 @@ const Login = ({ onLogin }) => {
             <label>Username or Email *</label>
             <input
               type="text"
+              name="username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={handleChange}
+              onBlur={handleBlur}
               required
               placeholder="Enter username or email"
+              style={{
+                borderColor: errors.username ? '#e74c3c' : username && !errors.username ? '#4CAF50' : '#e1e5e9'
+              }}
             />
+            {errors.username && <span className="error-message">{errors.username}</span>}
+            {!errors.username && username && (
+              <small style={{ color: '#4CAF50', fontSize: '0.85rem' }}>✓ Valid format</small>
+            )}
           </div>
 
           <div className="form-group">
             <label>Password *</label>
             <input
               type="password"
+              name="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleChange}
+              onBlur={handleBlur}
               required
               placeholder="Enter password"
+              style={{
+                borderColor: errors.password ? '#e74c3c' : password && !errors.password ? '#4CAF50' : '#e1e5e9'
+              }}
             />
-          </div>
-
-          <div className="form-group">
-            <label>Login as (Optional)</label>
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="">Any Role</option>
-              <option value="visitor">Visitor</option>
-              <option value="artist">Artist</option>
-              <option value="curator">Curator</option>
-              <option value="admin">Admin</option>
-            </select>
-            <small style={{ display: 'block', marginTop: '0.25rem', color: '#666', fontSize: '0.85rem' }}>
-              Leave as "Any Role" to auto-detect
-            </small>
+            {errors.password && <span className="error-message">{errors.password}</span>}
+            {!errors.password && password && (
+              <small style={{ color: '#4CAF50', fontSize: '0.85rem' }}>✓ Password entered</small>
+            )}
           </div>
 
           <div className="form-group" style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
@@ -171,85 +254,44 @@ const Login = ({ onLogin }) => {
             </label>
           </div>
 
-          <button type="submit" className="login-btn">Login</button>
+          <Captcha 
+            onVerify={handleCaptchaVerify}
+            onError={handleCaptchaError}
+          />
+
+          {captchaError && (
+            <div style={{
+              padding: '0.75rem',
+              background: '#fee',
+              color: '#c33',
+              borderRadius: '5px',
+              marginBottom: '1rem',
+              fontSize: '0.9rem',
+              border: '1px solid #e74c3c'
+            }}>
+              {captchaError}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className="login-btn"
+            disabled={!isCaptchaVerified || isLoading}
+            style={{
+              opacity: (!isCaptchaVerified || isLoading) ? 0.6 : 1,
+              cursor: (!isCaptchaVerified || isLoading) ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {isLoading ? 'Logging in...' : (!isCaptchaVerified ? 'Complete CAPTCHA to Login' : 'Login')}
+          </button>
         </form>
 
-        <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #eee' }}>
-          <p style={{ textAlign: 'center', color: '#666', marginBottom: '1rem', fontSize: '0.9rem' }}>
-            Don't have an account?{' '}
-            <Link to="/signup" style={{ color: '#667eea', textDecoration: 'none', fontWeight: '500' }}>
-              Sign up here
-            </Link>
-          </p>
-
-          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #eee' }}>
-            <p style={{ textAlign: 'center', color: '#999', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-              Quick Demo Login (for testing):
-            </p>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button 
-                type="button"
-                onClick={() => handleQuickLogin('admin')}
-                style={{ 
-                  padding: '0.5rem 1rem', 
-                  fontSize: '0.85rem',
-                  background: '#667eea', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '5px', 
-                  cursor: 'pointer' 
-                }}
-              >
-                Admin
-              </button>
-              <button 
-                type="button"
-                onClick={() => handleQuickLogin('artist')}
-                style={{ 
-                  padding: '0.5rem 1rem', 
-                  fontSize: '0.85rem',
-                  background: '#667eea', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '5px', 
-                  cursor: 'pointer' 
-                }}
-              >
-                Artist
-              </button>
-              <button 
-                type="button"
-                onClick={() => handleQuickLogin('curator')}
-                style={{ 
-                  padding: '0.5rem 1rem', 
-                  fontSize: '0.85rem',
-                  background: '#667eea', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '5px', 
-                  cursor: 'pointer' 
-                }}
-              >
-                Curator
-              </button>
-              <button 
-                type="button"
-                onClick={() => handleQuickLogin('visitor')}
-                style={{ 
-                  padding: '0.5rem 1rem', 
-                  fontSize: '0.85rem',
-                  background: '#667eea', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '5px', 
-                  cursor: 'pointer' 
-                }}
-              >
-                Visitor
-              </button>
-            </div>
-          </div>
-        </div>
+        <p style={{ marginTop: '1.5rem', textAlign: 'center', color: '#666', fontSize: '0.9rem' }}>
+          Don't have an account?{' '}
+          <Link to="/signup" style={{ color: '#667eea', textDecoration: 'none', fontWeight: '500' }}>
+            Sign up here
+          </Link>
+        </p>
       </div>
     </div>
   );

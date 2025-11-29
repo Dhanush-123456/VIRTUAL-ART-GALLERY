@@ -25,6 +25,7 @@ const Header = ({ user, onLogout }) => {
         <Link to="/about" onClick={() => setMobileMenuOpen(false)}>About</Link>
         {user ? (
           <>
+            <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
             <span className="user-welcome">
               Welcome, {user.fullName || user.username}
             </span>

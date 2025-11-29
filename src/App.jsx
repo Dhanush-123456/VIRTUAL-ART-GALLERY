@@ -9,6 +9,7 @@ import Admin from './components/Admin';
 import Artist from './components/Artist';
 import Curator from './components/Curator';
 import Visitor from './components/Visitor';
+import Dashboard from './components/Dashboard';
 import Artists from './components/Artists';
 import Exhibitions from './components/Exhibitions';
 import About from './components/About';
@@ -66,6 +67,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/signup" element={<Signup onSignup={handleLogin} />} />
+          <Route path="/dashboard" element={<Dashboard user={user} onLogin={handleLogin} onLogout={handleLogout} />} />
           <Route path="/admin" element={<Admin user={user} onLogin={handleLogin} onLogout={handleLogout} />} />
           <Route path="/artist" element={<Artist user={user} onLogin={handleLogin} onLogout={handleLogout} />} />
           <Route path="/curator" element={<Curator user={user} onLogin={handleLogin} onLogout={handleLogout} />} />

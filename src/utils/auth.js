@@ -7,15 +7,6 @@ export const initializeDemoUsers = () => {
   if (users.length === 0) {
     const demoUsers = [
       {
-        id: 1,
-        username: 'admin',
-        email: 'admin@example.com',
-        password: 'admin123',
-        role: 'admin',
-        fullName: 'Admin User',
-        createdAt: new Date().toISOString()
-      },
-      {
         id: 2,
         username: 'artist',
         email: 'artist@example.com',
